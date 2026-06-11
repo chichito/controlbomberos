@@ -70,14 +70,20 @@ class MyApp extends StatelessWidget {
                 BlocProvider(
                   create: (_) => EmergenciaBloc()..add(GetEmergenciaAllEvent()),
                 ),
-                BlocProvider(create: (context) => TiemposBloc()),
+                BlocProvider(
+                  create: (context) =>
+                      TiemposBloc(context.read<EmergenciaBloc>()),
+                ),
               ],
               child: HomePage(),
             ),
             AppNavigator.emergencia: (_) => MultiBlocProvider(
               providers: [
                 BlocProvider(create: (_) => EmergenciaBloc()),
-                BlocProvider(create: (context) => TiemposBloc()),
+                BlocProvider(
+                  create: (context) =>
+                      TiemposBloc(context.read<EmergenciaBloc>()),
+                ),
               ],
               child: EmergenciaPage(),
             ),

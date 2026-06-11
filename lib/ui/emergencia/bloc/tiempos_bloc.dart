@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:controlbomberos/data/repositories/tiempo/tiempo_repository_impl.dart';
 import 'package:controlbomberos/domain/models/tiempo.dart';
+import 'package:controlbomberos/ui/emergencia/bloc/emergencia_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'tiempos_event.dart';
@@ -9,7 +10,9 @@ part 'tiempos_state.dart';
 
 class TiemposBloc extends Bloc<TiemposEvent, TiemposState> {
   final TiempoRepositoryImpl _tiempoRepository = TiempoRepositoryImpl();
-  TiemposBloc() : super(TiemposInitial()) {
+  final EmergenciaBloc emergenciaBloc;
+
+  TiemposBloc(this.emergenciaBloc) : super(TiemposInitial()) {
     on<GetTiemposAllEvent>(_getTiemposAllEvent);
     on<SetTiemposAllEvent>(_setTiemposAllEvent);
   }
@@ -34,6 +37,7 @@ class TiemposBloc extends Bloc<TiemposEvent, TiemposState> {
       event.idUsuario,
       event.sTipo,
     );
+    emergenciaBloc.add(GetEmergenciaIDEvent(idEmergencia: event.idEmergencia));
     emit(TiemposLoaded(tiempos: tiempos));
   }
 }
