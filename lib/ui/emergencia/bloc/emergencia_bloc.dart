@@ -12,6 +12,7 @@ class EmergenciaBloc extends Bloc<EmergenciaEvent, EmergenciaState> {
       EmergenciaRepositoryImpl();
   EmergenciaBloc() : super(EmergenciaInitial()) {
     on<GetEmergenciaAllEvent>(_getEmergenciaAllEvent);
+    on<GetEmergenciaIDEvent>(_getEmergenciaIDEvent);
   }
 
   Future<void> _getEmergenciaAllEvent(
@@ -20,5 +21,15 @@ class EmergenciaBloc extends Bloc<EmergenciaEvent, EmergenciaState> {
   ) async {
     final emergencias = await _emergenciaRepository.getAllEmergencias();
     emit(EmergenciaLoaded(emergencias: emergencias));
+  }
+
+  Future<void> _getEmergenciaIDEvent(
+    GetEmergenciaIDEvent event,
+    Emitter<EmergenciaState> emit,
+  ) async {
+    final emergencia = await _emergenciaRepository.getEmergenciaById(
+      event.idEmergencia,
+    );
+    emit(EmergenciaIDLoaded(emergencia: emergencia));
   }
 }

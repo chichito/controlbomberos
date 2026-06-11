@@ -13,4 +13,13 @@ class EmergenciaLoaded extends EmergenciaState {
   }
 }
 
+class EmergenciaIDLoaded extends EmergenciaState {
+  final Emergencia? emergencia;
+  EmergenciaIDLoaded({this.emergencia});
+
+  EmergenciaIDLoaded copyWith({Emergencia? emergencia}) {
+    return EmergenciaIDLoaded(emergencia: emergencia ?? this.emergencia);
+  }
+}
+
 class EmergenciaFailed extends EmergenciaState {}

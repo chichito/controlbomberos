@@ -73,12 +73,16 @@ class _HomePageState extends State<HomePage> {
                               itemCount: state.emergencias.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
+                                  onTap: () async {
+                                    final emergenciaBloc = context
+                                        .read<EmergenciaBloc>();
+                                    final result = await Navigator.pushNamed(
                                       context,
                                       AppNavigator.emergencia,
-                                      arguments: state.emergencias[index],
+                                      arguments: state.emergencias[index].id,
                                     );
+                                    if (!mounted) return;
+                                    emergenciaBloc.add(GetEmergenciaAllEvent());
                                   },
                                   child: ItemEmergencia(
                                     emergencia: state.emergencias[index],

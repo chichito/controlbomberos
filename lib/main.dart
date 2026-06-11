@@ -74,8 +74,11 @@ class MyApp extends StatelessWidget {
               ],
               child: HomePage(),
             ),
-            AppNavigator.emergencia: (_) => BlocProvider(
-              create: (context) => TiemposBloc(),
+            AppNavigator.emergencia: (_) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => EmergenciaBloc()),
+                BlocProvider(create: (context) => TiemposBloc()),
+              ],
               child: EmergenciaPage(),
             ),
             AppNavigator.gps: (_) => GpsPage(),

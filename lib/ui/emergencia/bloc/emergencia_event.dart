@@ -4,7 +4,13 @@ class EmergenciaEvent {}
 
 class GetEmergenciaAllEvent extends EmergenciaEvent {}
 
-class GetEmergenciaEvent extends EmergenciaEvent {
+class GetEmergenciaIDEvent extends EmergenciaEvent {
+  final String idEmergencia;
+
+  GetEmergenciaIDEvent({required this.idEmergencia});
+}
+
+class SetEmergenciaEvent extends EmergenciaEvent {
   final Emergencia emergencia;
-  GetEmergenciaEvent({required this.emergencia});
+  SetEmergenciaEvent({required this.emergencia});
 }
