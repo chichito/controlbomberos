@@ -2,10 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:controlbomberos/data/repositories/emergencia/emergencia_repository_impl.dart';
-import 'package:controlbomberos/data/repositories/tiempo/tiempo_repository_impl.dart';
 import 'package:controlbomberos/data/repositories/user/user_repository_impl.dart';
 import 'package:controlbomberos/domain/models/emergencia.dart';
-import 'package:controlbomberos/domain/models/tiempo.dart';
 import 'package:controlbomberos/domain/models/user.dart';
 import 'package:dio/dio.dart';
 // ignore: depend_on_referenced_packages
@@ -124,7 +122,6 @@ class SQLiteHelper {
   Future<void> insertInitialData() async {
     final userRepository = UserRepositoryImpl();
     final emergenciaRepository = EmergenciaRepositoryImpl();
-    final tiempoRepository = TiempoRepositoryImpl();
 
     // Insertar tiempos de ejemplo
     // Insertar usuarios de ejemplo
@@ -198,20 +195,6 @@ class SQLiteHelper {
         idusuarioactualizogeo: "111",
         latitud: -0.180653,
         longitud: -78.467838,
-        synced: 0,
-      ),
-    ]);
-
-    await tiempoRepository.batchInsertTiempos([
-      Tiempo(
-        idusuario: "111",
-        idemergencia: "1",
-        numerorevisado: 1,
-        fechahorareviso: DateTime.now(),
-        /*fechahoraasigno: DateTime.now(),
-        fechahorasitio: DateTime.now(),
-        fechahoraretorno: DateTime.now(),
-        fechahorafinalizo: DateTime.now(),*/
         synced: 0,
       ),
     ]);
