@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:controlbomberos/data/repositories/emergencia/emergencia_repository_impl.dart';
+import 'package:controlbomberos/data/repositories/tiempo/tiempo_repository.dart';
+import 'package:controlbomberos/data/repositories/tiempo/tiempo_repository_impl.dart';
 import 'package:controlbomberos/data/repositories/user/user_repository_impl.dart';
 import 'package:controlbomberos/domain/models/emergencia.dart';
 import 'package:controlbomberos/domain/models/user.dart';
@@ -117,11 +119,22 @@ class SQLiteHelper {
             PRIMARY KEY (idusuario, idemergencia)
           )
  """);
+
+    await db.execute(""" CREATE TABLE IF NOT EXISTS comentarios(
+            guid TEXT PRIMARY KEY,
+            idusuario TEXT,
+            idemergencia TEXT,
+            tipotiempoestado TEXT,
+            fechahoraregistro TEXT,
+            comentario TEXT
+          )
+ """);
   }
 
   Future<void> insertInitialData() async {
     final userRepository = UserRepositoryImpl();
     final emergenciaRepository = EmergenciaRepositoryImpl();
+    final tiempoRepository = TiempoRepositoryImpl();
 
     // Insertar tiempos de ejemplo
     // Insertar usuarios de ejemplo
@@ -199,6 +212,7 @@ class SQLiteHelper {
       ),
     ]);
 
+    await tiempoRepository.eliminarTiempo();
     print("Datos iniciales insertados correctamente");
   }
 

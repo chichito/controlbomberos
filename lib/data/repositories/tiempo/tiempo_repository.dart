@@ -9,6 +9,7 @@ abstract class TiempoRepository {
     String idUsuario,
     String sTipo,
   );
+  Future<void> eliminarTiempo();
   // Obtener la lista de tiempos
   Future<List<Tiempo>> getAllTiempos();
   Future<List<Tiempo>> batchInsertTiempos(List<Tiempo> listaList);

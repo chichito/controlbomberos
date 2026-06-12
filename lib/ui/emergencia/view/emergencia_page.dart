@@ -1,4 +1,3 @@
-import 'package:controlbomberos/domain/models/emergencia.dart';
 import 'package:controlbomberos/ui/auth/bloc/auth_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/emergencia_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/tiempos_bloc.dart';

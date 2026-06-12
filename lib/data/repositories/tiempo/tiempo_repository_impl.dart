@@ -16,6 +16,12 @@ class TiempoRepositoryImpl extends TiempoRepository {
   }
 
   @override
+  Future<void> eliminarTiempo() async {
+    final db = await SQLiteHelper().database;
+    db.delete("tiempos");
+  }
+
+  @override
   Future<Tiempo?> updateTiempo(Tiempo tiempo) async {
     final db = await SQLiteHelper().database;
     await db.update(
