@@ -47,6 +47,7 @@ dependencies:
   avatars: ^3.0.2
   gap: ^3.0.1
   uuid: ^4.5.3
+  image_picker: ^1.2.2
 
 
 dev_dependencies:

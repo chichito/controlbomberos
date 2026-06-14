@@ -2,7 +2,7 @@ import 'package:controlbomberos/domain/models/tiempo.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/retroalimentacion_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/tiempos_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/widgets/ingcometarios_emergencia.dart';
-import 'package:controlbomberos/ui/emergencia/widgets/ingfotosvideos_emergencia.dart';
+import 'package:controlbomberos/ui/emergencia/widgets/lstfotosvideos_emergencia.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,7 +34,7 @@ class MenuflotanteEmergencia extends StatelessWidget {
                     context: context,
                     barrierDismissible: false,
                     builder: (BuildContext context) {
-                      return IngfotosvideosEmergencia(
+                      return LstfotosvideosEmergencia(
                         idEmergencia: tiempo.idemergencia ?? '',
                         sTipoTiempo: '',
                       );
