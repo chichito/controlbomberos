@@ -19,38 +19,6 @@ class LstfotosvideosEmergencia extends StatefulWidget {
 }
 
 class _LstfotosvideosEmergenciaState extends State<LstfotosvideosEmergencia> {
-  /*
-  final List<XFile> _imageFiles = [];
-
-  final ImagePicker _picker = ImagePicker();
-
-  // Método para seleccionar imágenes (una o varias desde galería) 
-  Future<void> _pickImages(ImageSource source) async {
-    try {
-      if (source == ImageSource.gallery) {
-        // Seleccionar múltiples imágenes de la galería
-        final List<XFile> selectedFiles = await _picker.pickMultiImage();
-        if (selectedFiles.isNotEmpty) {
-          setState(() {
-            _imageFiles.addAll(selectedFiles);
-          });
-        }
-      } else {
-        // Capturar una imagen con la cámara
-        final XFile? photo = await _picker.pickImage(
-          source: ImageSource.camera,
-        );
-        if (photo != null) {
-          setState(() {
-            _imageFiles.add(photo);
-          });
-        }
-      }
-    } catch (e) {
-      print("Error al seleccionar la imagen: $e");
-    }
-  }
-*/
   // Muestra un menú inferior (Modal) para elegir opción
   void _showOptions(BuildContext context) {
     showModalBottomSheet(
@@ -194,7 +162,19 @@ class _LstfotosvideosEmergenciaState extends State<LstfotosvideosEmergencia> {
                     children: [
                       SizedBox(
                         child: ElevatedButton(
-                          onPressed: () => _showOptions(context),
+                          onPressed: () {
+                            final fotosVideosBloc =
+                                BlocProvider.of<FotosvideosBloc>(context);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return BlocProvider.value(
+                                  value: fotosVideosBloc,
+                                  child: ItemBotonesGaleriaCamara(size: size),
+                                );
+                              },
+                            );
+                          },
                           child: Icon(Icons.add_a_photo),
                         ),
                       ),
@@ -206,6 +186,67 @@ class _LstfotosvideosEmergenciaState extends State<LstfotosvideosEmergencia> {
                       ),
                     ],
                   ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ItemBotonesGaleriaCamara extends StatelessWidget {
+  const ItemBotonesGaleriaCamara({super.key, required this.size});
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    final aa = context.read<FotosvideosBloc>();
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      child: Stack(
+        children: [
+          Container(
+            width: size.width * 0.60,
+            height: size.height * 0.15,
+            padding: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
+            margin: EdgeInsets.only(top: 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(25),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10.0,
+                  offset: Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    aa.add(PickImagesFromGalleryEvent());
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.photo_library),
+                  label: Text('Galería'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context.read<FotosvideosBloc>().add(
+                      PickImagesFromCameraEvent(),
+                    );
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.camera_alt),
+                  label: Text('Cámara'),
                 ),
               ],
             ),
