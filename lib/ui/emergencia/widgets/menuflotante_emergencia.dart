@@ -1,6 +1,8 @@
 import 'package:controlbomberos/domain/models/tiempo.dart';
+import 'package:controlbomberos/ui/emergencia/bloc/retroalimentacion_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/tiempos_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/widgets/ingcometarios_emergencia.dart';
+import 'package:controlbomberos/ui/emergencia/widgets/ingfotosvideos_emergencia.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,7 +34,50 @@ class MenuflotanteEmergencia extends StatelessWidget {
                     context: context,
                     barrierDismissible: false,
                     builder: (BuildContext context) {
-                      return IngcometariosEmergencia();
+                      return IngfotosvideosEmergencia(
+                        idEmergencia: tiempo.idemergencia ?? '',
+                        sTipoTiempo: '',
+                      );
+                    },
+                  );
+                },
+                child: SizedBox(
+                  width: 150,
+                  height: 40,
+                  child: Center(child: Text('Fotos y Videos')),
+                ),
+              ),
+            ),
+          ),
+          Card(
+            elevation: 4.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            child: Visibility(
+              visible: tiempo.fechahoraasigno != null
+                  ? tiempo.fechahorafinalizo == null
+                        ? true
+                        : false
+                  : false,
+              child: GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      String sTipoTemp = '';
+                      if (tiempo.fechahoraasigno != null) sTipoTemp = 'TA';
+                      if (tiempo.fechahorasitio != null) sTipoTemp = 'TS';
+                      if (tiempo.fechahoraretorno != null) sTipoTemp = 'TRE';
+                      if (tiempo.fechahorafinalizo != null) sTipoTemp = 'TF';
+                      return BlocProvider(
+                        create: (context) => RetroalimentacionBloc(),
+                        child: IngcometariosEmergencia(
+                          idEmergencia: tiempo.idemergencia ?? '',
+                          sTipoTiempo: sTipoTemp,
+                        ),
+                      );
                     },
                   );
                 },

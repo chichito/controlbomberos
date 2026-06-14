@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:controlbomberos/data/repositories/emergencia/emergencia_repository_impl.dart';
-import 'package:controlbomberos/data/repositories/tiempo/tiempo_repository.dart';
 import 'package:controlbomberos/data/repositories/tiempo/tiempo_repository_impl.dart';
 import 'package:controlbomberos/data/repositories/user/user_repository_impl.dart';
 import 'package:controlbomberos/domain/models/emergencia.dart';
@@ -120,13 +119,14 @@ class SQLiteHelper {
           )
  """);
 
-    await db.execute(""" CREATE TABLE IF NOT EXISTS comentarios(
+    await db.execute(""" CREATE TABLE IF NOT EXISTS retroalimentacion(
             guid TEXT PRIMARY KEY,
             idusuario TEXT,
             idemergencia TEXT,
             tipotiempoestado TEXT,
             fechahoraregistro TEXT,
-            comentario TEXT
+            comentario TEXT,
+            synced INTEGER DEFAULT 0
           )
  """);
   }

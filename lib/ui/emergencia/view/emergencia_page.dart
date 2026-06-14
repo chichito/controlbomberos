@@ -1,6 +1,7 @@
 import 'package:controlbomberos/ui/auth/bloc/auth_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/emergencia_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/tiempos_bloc.dart';
+import 'package:controlbomberos/ui/emergencia/widgets/itemcomentarios_emergencia.dart';
 import 'package:controlbomberos/ui/emergencia/widgets/menuflotante_emergencia.dart';
 import 'package:controlbomberos/ui/emergencia/widgets/tiempos_emergencia.dart';
 import 'package:flutter/material.dart';
@@ -161,6 +162,7 @@ class _EmergenciaPageState extends State<EmergenciaPage> {
                         ],
                       ),
                     ),
+                    ItemcomentariosEmergencia(),
                   ],
                 );
               }

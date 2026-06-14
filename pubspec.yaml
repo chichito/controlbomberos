@@ -46,6 +46,7 @@ dependencies:
   fluttertoast: ^9.1.0
   avatars: ^3.0.2
   gap: ^3.0.1
+  uuid: ^4.5.3
 
 
 dev_dependencies:
