@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:controlbomberos/data/repositories/emergencia/emergencia_repository_impl.dart';
+import 'package:controlbomberos/data/repositories/fotosvideos/fotosvideos_repository_impl.dart';
+import 'package:controlbomberos/data/repositories/retroalimentacion/retroalimentacion_repository_impl.dart';
 import 'package:controlbomberos/data/repositories/tiempo/tiempo_repository_impl.dart';
 import 'package:controlbomberos/data/repositories/user/user_repository_impl.dart';
 import 'package:controlbomberos/domain/models/emergencia.dart';
@@ -129,12 +131,26 @@ class SQLiteHelper {
             synced INTEGER DEFAULT 0
           )
  """);
+
+    await db.execute(""" CREATE TABLE IF NOT EXISTS fotosvideosemergencia(
+            guid TEXT PRIMARY KEY,
+            idusuario TEXT,
+            idemergencia TEXT,
+            tipotiempoestado TEXT,
+            fechahoraregistro TEXT,
+            media BLOB,
+            tipoarchivo TEXT,
+            synced INTEGER DEFAULT 0
+          )
+ """);
   }
 
   Future<void> insertInitialData() async {
     final userRepository = UserRepositoryImpl();
     final emergenciaRepository = EmergenciaRepositoryImpl();
     final tiempoRepository = TiempoRepositoryImpl();
+    final retroalimentacionRepository = RetroalimentacionRepositoryImpl();
+    final fotosvideosRepository = FotosVideosRepositoryImpl();
 
     // Insertar tiempos de ejemplo
     // Insertar usuarios de ejemplo
@@ -213,6 +229,8 @@ class SQLiteHelper {
     ]);
 
     await tiempoRepository.eliminarTiempo();
+    await retroalimentacionRepository.eliminarRetroalimentacion();
+    await fotosvideosRepository.eliminarFotosVideos();
     print("Datos iniciales insertados correctamente");
   }
 

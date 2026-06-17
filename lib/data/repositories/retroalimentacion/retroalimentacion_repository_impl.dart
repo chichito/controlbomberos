@@ -56,8 +56,31 @@ class RetroalimentacionRepositoryImpl extends RetroalimentacionRepository {
   Future<List<Retroalimentacion>> getAllRetroalimentacion(
     String idEmergencia,
     String idUsuario,
-  ) {
-    // TODO: implement getAllRetroalimentacion
-    throw UnimplementedError();
+  ) async {
+    final db = await SQLiteHelper().database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT * FROM retroalimentacion WHERE idemergencia = ? and idusuario = ?',
+      [idEmergencia, idUsuario],
+    );
+
+    return List.generate(maps.length, (index) {
+      return Retroalimentacion(
+        guid: maps[index]["guid"],
+        idusuario: maps[index]["idusuario"],
+        idemergencia: maps[index]["idemergencia"],
+        tipotiempoestado: maps[index]["tipotiempoestado"],
+        fechahoraregistro: maps[index]["fechahoraregistro"] == null
+            ? DateTime.fromMillisecondsSinceEpoch(0)
+            : DateTime.parse(maps[index]["fechahoraregistro"]),
+        comentario: maps[index]["comentario"],
+        synced: maps[index]["synced"],
+      );
+    });
+  }
+
+  @override
+  Future<void> eliminarRetroalimentacion() async {
+    final db = await SQLiteHelper().database;
+    db.delete("retroalimentacion");
   }
 }

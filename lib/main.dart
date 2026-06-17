@@ -5,8 +5,10 @@ import 'package:controlbomberos/ui/auth/view/auth_handler.dart';
 import 'package:controlbomberos/ui/core/navigation/app_navigator.dart';
 import 'package:controlbomberos/ui/core/themes/theme.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/emergencia_bloc.dart';
+import 'package:controlbomberos/ui/emergencia/bloc/retroalimentacion_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/tiempos_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/view/emergencia_page.dart';
+import 'package:controlbomberos/ui/fotosvideos/bloc/fotosvideos_bloc.dart';
 import 'package:controlbomberos/ui/gps/bloc/gps_bloc.dart';
 import 'package:controlbomberos/ui/gps/view/gps_page.dart';
 import 'package:controlbomberos/ui/home/view/home_page.dart';
@@ -80,6 +82,8 @@ class MyApp extends StatelessWidget {
             AppNavigator.emergencia: (_) => MultiBlocProvider(
               providers: [
                 BlocProvider(create: (_) => EmergenciaBloc()),
+                BlocProvider(create: (_) => RetroalimentacionBloc()),
+                BlocProvider(create: (_) => FotosVideosBloc()),
                 BlocProvider(
                   create: (context) =>
                       TiemposBloc(context.read<EmergenciaBloc>()),

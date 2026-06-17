@@ -12,4 +12,5 @@ abstract class RetroalimentacionRepository {
     String idEmergencia,
     String idUsuario,
   );
+  Future<void> eliminarRetroalimentacion();
 }

@@ -35,11 +35,16 @@ class MenuflotanteEmergencia extends StatelessWidget {
                     context: context,
                     barrierDismissible: false,
                     builder: (BuildContext context) {
+                      String sTipoTemp = '';
+                      if (tiempo.fechahoraasigno != null) sTipoTemp = 'TA';
+                      if (tiempo.fechahorasitio != null) sTipoTemp = 'TS';
+                      if (tiempo.fechahoraretorno != null) sTipoTemp = 'TRE';
+                      if (tiempo.fechahorafinalizo != null) sTipoTemp = 'TF';
                       return BlocProvider(
-                        create: (context) => FotosvideosBloc(),
+                        create: (context) => FotosVideosBloc(),
                         child: LstfotosvideosEmergencia(
                           idEmergencia: tiempo.idemergencia ?? '',
-                          sTipoTiempo: '',
+                          sTipoTiempo: sTipoTemp,
                         ),
                       );
                     },

@@ -1,7 +1,7 @@
 import 'package:controlbomberos/ui/auth/bloc/auth_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/emergencia_bloc.dart';
+import 'package:controlbomberos/ui/emergencia/bloc/retroalimentacion_bloc.dart';
 import 'package:controlbomberos/ui/emergencia/bloc/tiempos_bloc.dart';
-import 'package:controlbomberos/ui/emergencia/widgets/itemcomentarios_emergencia.dart';
 import 'package:controlbomberos/ui/emergencia/widgets/menuflotante_emergencia.dart';
 import 'package:controlbomberos/ui/emergencia/widgets/tiempos_emergencia.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +49,10 @@ class _EmergenciaPageState extends State<EmergenciaPage> {
   @override
   Widget build(BuildContext context) {
     final idEmer = ModalRoute.of(context)!.settings.arguments as String;
-
+    final authState = context.read<AuthBloc>().state;
+    final cedula = authState is AuthStateLoggedIn
+        ? authState.user.cedula ?? ''
+        : '';
     final blocEmer = context.read<EmergenciaBloc>();
     blocEmer.add(GetEmergenciaIDEvent(idEmergencia: idEmer));
 
@@ -74,7 +77,17 @@ class _EmergenciaPageState extends State<EmergenciaPage> {
       ),
       body: Stack(
         children: [
-          BlocBuilder<EmergenciaBloc, EmergenciaState>(
+          BlocConsumer<EmergenciaBloc, EmergenciaState>(
+            listener: (context, state) {
+              if (state is EmergenciaIDLoaded) {
+                context.read<RetroalimentacionBloc>().add(
+                  GetRetroalimentacionEvent(
+                    idEmergencia: idEmer,
+                    idUsuario: cedula,
+                  ),
+                );
+              }
+            },
             builder: (context, state) {
               if (state is EmergenciaFailed) {
                 return Column(
@@ -162,7 +175,58 @@ class _EmergenciaPageState extends State<EmergenciaPage> {
                         ],
                       ),
                     ),
-                    ItemcomentariosEmergencia(),
+                    Container(
+                      color: Colors.greenAccent,
+                      width: MediaQuery.of(context).size.width,
+                      child:
+                          BlocBuilder<
+                            RetroalimentacionBloc,
+                            RetroalimentacionState
+                          >(
+                            builder: (context, state) {
+                              if (state is RetroalimentacionInitial) {
+                                return Text(
+                                  'Loading retoalimentaciones...',
+                                  style: TextStyle(color: Colors.black),
+                                );
+                              }
+                              if (state is RetroalimentacionFailed) {
+                                return Text(
+                                  'Error: Failed to load retoalimentaciones',
+                                  style: TextStyle(color: Colors.black),
+                                );
+                              }
+                              if (state is RetroalimentacionLoaded) {
+                                if (state.retroalimentacion.isEmpty) {
+                                  return Text(
+                                    'Sin Retoalimentaciones',
+                                    style: TextStyle(color: Colors.black),
+                                  );
+                                }
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: state.retroalimentacion.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                        final retro =
+                                            state.retroalimentacion[index];
+                                        return ListTile(
+                                          title: Text(
+                                            retro.fechahoraregistro.toString(),
+                                          ),
+                                          subtitle: Text(retro.comentario),
+                                        );
+                                      },
+                                );
+                              }
+                              return Text(
+                                'Unknown state',
+                                style: TextStyle(color: Colors.black),
+                              );
+                            },
+                          ),
+                    ),
                   ],
                 );
               }

@@ -44,11 +44,21 @@ class RetroalimentacionBloc
     Emitter<RetroalimentacionState> emit,
   ) async {
     emit(
-      RetroalimentacionStateGrabado(status: RetroalimentacionStatus.loading),
+      RetroalimentacionStateGrabado(
+        texto: state.texto,
+        status: RetroalimentacionStatus.loading,
+      ),
     );
-
-    final result = await _retroalimentacionRepository.sendRetroalimentacion(
-      Retroalimentacion(
+    if (state.texto.isEmpty) {
+      emit(
+        RetroalimentacionStateGrabado(
+          texto: state.texto,
+          status: RetroalimentacionStatus.empty,
+          message: 'Retroalimentacion en Blanco',
+        ),
+      );
+    } else {
+      final retro = Retroalimentacion(
         guid: Uuid().v4(),
         idusuario: event.idUsuario,
         idemergencia: event.idEmergencia,
@@ -56,23 +66,29 @@ class RetroalimentacionBloc
         fechahoraregistro: DateTime.now(),
         comentario: state.texto,
         synced: 0,
-      ),
-    );
-    if (result.success) {
-      emit(
-        RetroalimentacionStateGrabado(
-          status: RetroalimentacionStatus.success,
-          message: result.message,
-        ),
       );
-    } else {
-      emit(
-        RetroalimentacionStateGrabado(
-          status: RetroalimentacionStatus.error,
-          message: result.message,
-          errorCode: result.code,
-        ),
+
+      final result = await _retroalimentacionRepository.sendRetroalimentacion(
+        retro,
       );
+      if (result.success) {
+        emit(
+          RetroalimentacionStateGrabado(
+            texto: state.texto,
+            status: RetroalimentacionStatus.success,
+            message: 'Grabado Exitosamente',
+          ),
+        );
+      } else {
+        emit(
+          RetroalimentacionStateGrabado(
+            texto: state.texto,
+            status: RetroalimentacionStatus.error,
+            message: result.message,
+            errorCode: result.code,
+          ),
+        );
+      }
     }
   }
 }

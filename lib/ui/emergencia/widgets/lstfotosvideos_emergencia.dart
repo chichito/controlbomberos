@@ -1,5 +1,5 @@
-import 'dart:io';
-
+import 'package:controlbomberos/ui/auth/bloc/auth_bloc.dart';
+import 'package:controlbomberos/ui/emergencia/widgets/videoitemwidget.dart';
 import 'package:controlbomberos/ui/fotosvideos/bloc/fotosvideos_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,39 +19,19 @@ class LstfotosvideosEmergencia extends StatefulWidget {
 }
 
 class _LstfotosvideosEmergenciaState extends State<LstfotosvideosEmergencia> {
-  // Muestra un menú inferior (Modal) para elegir opción
-  void _showOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Galería'),
-                onTap: () {
-                  context.read<FotosvideosBloc>().add(
-                    PickImagesFromGalleryEvent(),
-                  );
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Cámara'),
-                onTap: () {
-                  context.read<FotosvideosBloc>().add(
-                    PickImagesFromCameraEvent(),
-                  );
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authState = context.read<AuthBloc>().state;
+      final cedula = authState is AuthStateLoggedIn
+          ? authState.user.cedula ?? ''
+          : '';
+
+      context.read<FotosVideosBloc>().add(
+        GetPickEvent(idUsuario: cedula, idEmergencia: widget.idEmergencia),
+      );
+    });
   }
 
   @override
@@ -80,114 +60,191 @@ class _LstfotosvideosEmergenciaState extends State<LstfotosvideosEmergencia> {
                 ),
               ],
             ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    'Galeria de Fotos Emergencia',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 80, // Ajusta esta cantidad para bajar tu TextFormField
-                  left: 0.0,
-                  right: 0.0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      height: 200,
-                      child: BlocBuilder<FotosvideosBloc, FotosvideosState>(
-                        builder: (context, state) {
-                          if (state.images.isEmpty) {
-                            return Center(
-                              child: Text('No hay Imagenes Seleccionadas'),
-                            );
-                          }
-                          return GridView.builder(
-                            padding: const EdgeInsets.all(8.0),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 4.0,
-                                  mainAxisSpacing: 4.0,
-                                ),
-                            itemCount: state.images.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Stack(
-                                fit: StackFit.expand,
-                                children: [
-                                  Image.file(
-                                    File(state.images[index].path),
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Positioned(
-                                    right: 5,
-                                    top: 5,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        /*setState(() {
-                                                                  _imageFiles.removeAt(index);
-                                                                });*/
-                                      },
-                                      child: const CircleAvatar(
-                                        backgroundColor: Colors.red,
-                                        radius: 12,
-                                        child: Icon(
-                                          Icons.close,
-                                          size: 14,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
+            child: BlocBuilder<FotosVideosBloc, FotosVideosState>(
+              builder: (context, state) {
+                final isLoading = state.status == FotosVideosStatus.loading;
+                return Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Elegir Fotos Emergencia',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      SizedBox(
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: SizedBox(
                         child: ElevatedButton(
                           onPressed: () {
-                            final fotosVideosBloc =
-                                BlocProvider.of<FotosvideosBloc>(context);
-                            showDialog(
+                            final fotosVideosBloc = context
+                                .read<FotosVideosBloc>();
+                            showModalBottomSheet(
                               context: context,
                               builder: (BuildContext context) {
                                 return BlocProvider.value(
                                   value: fotosVideosBloc,
-                                  child: ItemBotonesGaleriaCamara(size: size),
+                                  child: const ItemBotonesElegirDos(),
                                 );
                               },
                             );
+
+                            /*
+                                        final fotosVideosBloc =
+                                            BlocProvider.of<FotosvideosBloc>(context);
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return BlocProvider.value(
+                                              value: fotosVideosBloc,
+                                              child: ItemBotonesElegir(size: size),
+                                            );
+                                          },
+                                        );
+                                        */
                           },
                           child: Icon(Icons.add_a_photo),
                         ),
                       ),
-                      SizedBox(
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.pop(context, 'OK'),
-                          child: Text('salir'),
+                    ),
+                    Positioned(
+                      top:
+                          30, // Ajusta esta cantidad para bajar tu TextFormField
+                      left: 0.0,
+                      right: 0.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 200,
+                          child: state.media.isEmpty
+                              ? Center(
+                                  child: Text('No hay Imagenes Seleccionadas'),
+                                )
+                              : GridView.builder(
+                                  padding: const EdgeInsets.all(8.0),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        crossAxisSpacing: 4.0,
+                                        mainAxisSpacing: 4.0,
+                                      ),
+                                  itemCount: state.media.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                        return Stack(
+                                          fit: StackFit.expand,
+                                          children: [
+                                            state.media[index].tipo == 'imagen'
+                                                ? Image.memory(
+                                                    state.media[index].file!,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : VideoItemWidget(
+                                                    videoBytes: state
+                                                        .media[index]
+                                                        .file!,
+                                                  ),
+                                            Positioned(
+                                              right: 5,
+                                              top: 5,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  context
+                                                      .read<FotosVideosBloc>()
+                                                      .add(
+                                                        PickDeleteMediaEvent(
+                                                          index: index,
+                                                        ),
+                                                      );
+                                                },
+                                                child: const CircleAvatar(
+                                                  backgroundColor: Colors.red,
+                                                  radius: 12,
+                                                  child: Icon(
+                                                    Icons.close,
+                                                    size: 14,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                ), //bulder aqui
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ],
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                child: ElevatedButton(
+                                  onPressed: isLoading
+                                      ? null
+                                      : state.media.isEmpty
+                                      ? null
+                                      : () {
+                                          final authState = context
+                                              .read<AuthBloc>()
+                                              .state;
+                                          final cedula =
+                                              authState is AuthStateLoggedIn
+                                              ? authState.user.cedula ?? ''
+                                              : '';
+                                          context.read<FotosVideosBloc>().add(
+                                            SendPickEvent(
+                                              idEmergencia: widget.idEmergencia,
+                                              idUsuario: cedula,
+                                              sTipoTiempo: widget.sTipoTiempo,
+                                            ),
+                                          );
+                                        },
+                                  child: isLoading
+                                      ? const CircularProgressIndicator()
+                                      : const Text('Grabar'),
+                                ),
+                              ),
+                              SizedBox(
+                                child: ElevatedButton(
+                                  onPressed: () => Navigator.pop(context, 'OK'),
+                                  child: Text('Salir'),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            isLoading
+                                ? ''
+                                : (state).status == FotosVideosStatus.error
+                                ? (state).message ?? ''
+                                : (state).status == FotosVideosStatus.empty
+                                ? (state).message ?? ''
+                                : (state).status == FotosVideosStatus.success
+                                ? (state).message ?? ''
+                                : '',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ],
@@ -196,14 +253,54 @@ class _LstfotosvideosEmergenciaState extends State<LstfotosvideosEmergencia> {
   }
 }
 
-class ItemBotonesGaleriaCamara extends StatelessWidget {
-  const ItemBotonesGaleriaCamara({super.key, required this.size});
+class ItemBotonesElegirDos extends StatelessWidget {
+  const ItemBotonesElegirDos({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final fotosVideosBloc = context.read<FotosVideosBloc>();
+    return SafeArea(
+      child: Wrap(
+        children: <Widget>[
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text('Galería'),
+            onTap: () {
+              fotosVideosBloc.add(PickMultipleMediaFromGalleryEvent());
+              Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text('Cámara Foto'),
+            onTap: () {
+              fotosVideosBloc.add(PickImagesFromCameraEvent());
+              Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text('Cámara Video'),
+            onTap: () {
+              fotosVideosBloc.add(PickVideosFromCameraEvent());
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/*no se utliza por que se utiliza otro metodo*/
+class ItemBotonesElegirUno extends StatelessWidget {
+  const ItemBotonesElegirUno({super.key, required this.size});
 
   final Size size;
 
   @override
   Widget build(BuildContext context) {
-    final aa = context.read<FotosvideosBloc>();
+    final aa = context.read<FotosVideosBloc>();
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0.0,
@@ -232,7 +329,7 @@ class ItemBotonesGaleriaCamara extends StatelessWidget {
               children: [
                 ElevatedButton.icon(
                   onPressed: () {
-                    aa.add(PickImagesFromGalleryEvent());
+                    aa.add(PickMultipleMediaFromGalleryEvent());
                     Navigator.of(context).pop();
                   },
                   icon: Icon(Icons.photo_library),
@@ -240,7 +337,7 @@ class ItemBotonesGaleriaCamara extends StatelessWidget {
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
-                    context.read<FotosvideosBloc>().add(
+                    context.read<FotosVideosBloc>().add(
                       PickImagesFromCameraEvent(),
                     );
                     Navigator.of(context).pop();

@@ -1,4 +1,4 @@
-enum ErrorCode { validation, database, insert, timeout, unknown }
+enum ErrorCode { validation, database, insert, timeout, unknown, notdata }
 
 class Result<T> {
   final bool success;

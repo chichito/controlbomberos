@@ -1,6 +1,6 @@
 part of 'retroalimentacion_bloc.dart';
 
-enum RetroalimentacionStatus { initial, loading, success, error }
+enum RetroalimentacionStatus { initial, loading, success, error, empty }
 
 class RetroalimentacionState {
   final String texto;
@@ -48,7 +48,8 @@ class RetroalimentacionStateGrabado extends RetroalimentacionState {
     required this.status,
     this.message,
     this.errorCode,
-  }) : super(texto: '');
+    required super.texto,
+  });
 
   @override
   RetroalimentacionStateGrabado copyWith({
@@ -61,6 +62,7 @@ class RetroalimentacionStateGrabado extends RetroalimentacionState {
       status: status ?? this.status,
       message: message,
       errorCode: errorCode,
+      texto: texto ?? this.texto,
     );
   }
 }
