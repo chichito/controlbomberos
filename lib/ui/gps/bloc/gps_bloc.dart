@@ -51,6 +51,7 @@ class GpsBloc extends Bloc<GpsEvent, GpsState> {
     AskLocationPermissionsEvent event,
     Emitter<GpsState> emit,
   ) async {
+    emit(state.copyWith(statusGps: StatusGps.loading));
     final status = await ph.Permission.location.request();
     if (status.isDenied || status.isPermanentlyDenied) {
       // Abrir las configuraciones de la app para que el usuario manualmente
@@ -59,6 +60,11 @@ class GpsBloc extends Bloc<GpsEvent, GpsState> {
       return;
     }
 
-    return emit(state.copyWith(isLocationPermissionsGranted: true));
+    return emit(
+      state.copyWith(
+        isLocationPermissionsGranted: true,
+        statusGps: StatusGps.success,
+      ),
+    );
   }
 }

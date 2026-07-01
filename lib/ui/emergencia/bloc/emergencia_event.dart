@@ -14,3 +14,5 @@ class SetEmergenciaEvent extends EmergenciaEvent {
   final Emergencia emergencia;
   SetEmergenciaEvent({required this.emergencia});
 }
+
+class GetEmergenciaSincronizarEvent extends EmergenciaEvent {}

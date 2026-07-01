@@ -25,19 +25,22 @@ class AuthHandler extends StatelessWidget {
                 (route) => false,
               );
             } else {
-              //context.read<DbBloc>().add(DBInitialStatusEvent());
-              navigatorKey.currentState?.pushNamedAndRemoveUntil(
-                AppNavigator.inicio,
-                (route) => false,
-              );
+              context.read<DbBloc>().add(DBInitialStatusEvent());
             }
           },
         ),
+        //luego
         BlocListener<DbBloc, DbState>(
           listener: (BuildContext context, DbState state) {
             if (state is DBConnectedState) {
               navigatorKey.currentState?.pushNamedAndRemoveUntil(
                 AppNavigator.login,
+                (route) => false,
+              );
+            }
+            if (state is DBErrorState) {
+              navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                AppNavigator.errordb,
                 (route) => false,
               );
             }

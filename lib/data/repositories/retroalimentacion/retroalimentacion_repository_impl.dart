@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:controlbomberos/data/helper/result.dart';
+import 'package:controlbomberos/data/services/result.dart';
 import 'package:controlbomberos/data/helper/sqlhelper.dart';
 import 'package:controlbomberos/data/repositories/retroalimentacion/retroalimentacion_repository.dart';
 import 'package:controlbomberos/domain/models/retroalimentacion.dart';

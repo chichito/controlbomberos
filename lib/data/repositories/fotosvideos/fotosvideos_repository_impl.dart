@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:controlbomberos/data/helper/result.dart';
+import 'package:controlbomberos/data/services/result.dart';
 import 'package:controlbomberos/data/helper/sqlhelper.dart';
 import 'package:controlbomberos/data/repositories/fotosvideos/fotosvideos_repository.dart';
 import 'package:controlbomberos/domain/models/fotosvideos.dart';

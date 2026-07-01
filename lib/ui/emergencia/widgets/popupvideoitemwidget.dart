@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoItemWidget extends StatefulWidget {
+class Popupvideoitemwidget extends StatefulWidget {
   final Uint8List videoBytes;
 
-  const VideoItemWidget({super.key, required this.videoBytes});
+  const Popupvideoitemwidget({super.key, required this.videoBytes});
 
   @override
-  State<VideoItemWidget> createState() => _VideoItemWidgetState();
+  State<Popupvideoitemwidget> createState() => _VideoItemWidgetState();
 }
 
-class _VideoItemWidgetState extends State<VideoItemWidget> {
+class _VideoItemWidgetState extends State<Popupvideoitemwidget> {
   VideoPlayerController? _controller;
   bool _isInitialized = false;
 
@@ -71,18 +71,36 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
         child: Center(child: CircularProgressIndicator()),
       );
     }
-    return _controller!.value.isInitialized
-        ? GestureDetector(
-            onTap: _togglePlayPause,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                VideoPlayer(_controller!),
-                if (!_controller!.value.isPlaying)
-                  Icon(Icons.play_circle_fill, size: 60, color: Colors.white70),
-              ],
-            ),
-          )
-        : Center(child: CircularProgressIndicator());
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero, // Elimina bordes internos para el video
+      backgroundColor: Colors.black,
+      content: SizedBox(
+        // 2. Define el ancho y alto deseado
+        width:
+            MediaQuery.of(context).size.width *
+            0.9, // 90% del ancho de pantalla
+        height: MediaQuery.of(context).size.height * 0.45, // A
+        child: _controller!.value.isInitialized
+            ? GestureDetector(
+                onTap: _togglePlayPause,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    VideoPlayer(_controller!),
+                    if (!_controller!.value.isPlaying)
+                      Icon(
+                        Icons.play_circle_fill,
+                        size: 60,
+                        color: Colors.white70,
+                      ),
+                  ],
+                ),
+              )
+            : SizedBox(
+                height: 200,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+      ),
+    );
   }
 }

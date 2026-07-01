@@ -60,7 +60,7 @@ class TiempoRepositoryImpl extends TiempoRepository {
       );
     } else if (sTipo == 'TA') {
       await db.rawUpdate(
-        'UPDATE tiempos SET numerorevisado = numerorevisado + 1,fechahoraasigno = ? WHERE idemergencia = ? and idusuario = ?',
+        'UPDATE tiempos SET fechahoraasigno = ? WHERE idemergencia = ? and idusuario = ?',
         [DateTime.now().toIso8601String(), idEmergencia, idUsuario],
       );
       await db.rawUpdate('UPDATE emergencias SET estado = ? WHERE id = ?', [
@@ -69,17 +69,17 @@ class TiempoRepositoryImpl extends TiempoRepository {
       ]);
     } else if (sTipo == 'TS') {
       await db.rawUpdate(
-        'UPDATE tiempos SET numerorevisado = numerorevisado + 1,fechahorasitio = ? WHERE idemergencia = ? and idusuario = ?',
+        'UPDATE tiempos SET fechahorasitio = ? WHERE idemergencia = ? and idusuario = ?',
         [DateTime.now().toIso8601String(), idEmergencia, idUsuario],
       );
     } else if (sTipo == 'TRE') {
       await db.rawUpdate(
-        'UPDATE tiempos SET numerorevisado = numerorevisado + 1,fechahoraretorno = ? WHERE idemergencia = ? and idusuario = ?',
+        'UPDATE tiempos SET fechahoraretorno = ? WHERE idemergencia = ? and idusuario = ?',
         [DateTime.now().toIso8601String(), idEmergencia, idUsuario],
       );
     } else if (sTipo == 'TF') {
       await db.rawUpdate(
-        'UPDATE tiempos SET numerorevisado = numerorevisado + 1,fechahorafinalizo = ? WHERE idemergencia = ? and idusuario = ?',
+        'UPDATE tiempos SET fechahorafinalizo = ? WHERE idemergencia = ? and idusuario = ?',
         [DateTime.now().toIso8601String(), idEmergencia, idUsuario],
       );
       await db.rawUpdate('UPDATE emergencias SET estado = ? WHERE id = ?', [

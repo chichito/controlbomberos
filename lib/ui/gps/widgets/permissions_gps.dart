@@ -25,10 +25,15 @@ class PermissionsGps extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           ElevatedButton(
-            onPressed: () {
-              context.read<GpsBloc>().add(AskLocationPermissionsEvent());
-            },
-            child: const Text('Solicitar Permisos'),
+            onPressed:
+                context.read<GpsBloc>().state.statusGps == StatusGps.loading
+                ? null
+                : () {
+                    context.read<GpsBloc>().add(AskLocationPermissionsEvent());
+                  },
+            child: context.read<GpsBloc>().state.statusGps == StatusGps.loading
+                ? CircularProgressIndicator()
+                : const Text('Solicitar Permisos'),
           ),
         ],
       ),

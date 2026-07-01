@@ -1,3 +1,6 @@
+import 'package:controlbomberos/data/services/emergencia_servicio.dart';
+import 'package:controlbomberos/data/services/injection.dart';
+import 'package:controlbomberos/data/services/requestnotificationpermission_service.dart';
 import 'package:controlbomberos/db/bloc/db_bloc.dart';
 import 'package:controlbomberos/error/error_db.dart';
 import 'package:controlbomberos/ui/auth/bloc/auth_bloc.dart';
@@ -17,10 +20,36 @@ import 'package:controlbomberos/ui/login/cubit/login_cubit.dart';
 import 'package:controlbomberos/ui/login/view/login_page.dart';
 import 'package:controlbomberos/ui/root/view/root_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-void main() {
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  //Para dar permisos a las notificaciones
+  await requestNotificationPermission(null);
+
+  // Encender el monitor de emergencias
+  await initializeEmergencyService();
+  await initDependencies();
+  FlutterBackgroundService().on('nuevaEmergencia').listen((event) {
+    print('Nueva emergencia recibida: $event');
+    GetIt.I<EmergenciaBloc>().add(GetEmergenciaAllEvent());
+  });
+
+  /*
+  //para mandar una notificacion local
+  final NotificationService _notificationService = NotificationService();
+  await _notificationService.initNotification();
+  // Para llamar la notificación en cualquier botón u evento:
+  _notificationService.showNotification(
+    title: '¡Hola desde Flutter!',
+    body: 'Esta es una notificación local sin usar Firebase.',
+  );*/
+
   runApp(const MyApp());
 }
 
@@ -47,10 +76,7 @@ class MyApp extends StatelessWidget {
             ..add(GpsInitialStatusEvent())
             ..add(ChangeGpsStatusEvent()),
         ),
-        BlocProvider<DbBloc>(
-          lazy: false,
-          create: (context) => DbBloc()..add(DBInitialStatusEvent()),
-        ),
+        BlocProvider<DbBloc>(lazy: false, create: (context) => DbBloc()),
         BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
         BlocProvider<LoginCubit>(
           create: (context) => LoginCubit(context.read<AuthBloc>()),
@@ -69,8 +95,9 @@ class MyApp extends StatelessWidget {
             AppNavigator.login: (_) => LoginPage(),
             AppNavigator.home: (_) => MultiBlocProvider(
               providers: [
-                BlocProvider(
-                  create: (_) => EmergenciaBloc()..add(GetEmergenciaAllEvent()),
+                BlocProvider.value(
+                  value: GetIt.I<EmergenciaBloc>()
+                    ..add(GetEmergenciaAllEvent()),
                 ),
                 BlocProvider(
                   create: (context) =>
@@ -81,7 +108,7 @@ class MyApp extends StatelessWidget {
             ),
             AppNavigator.emergencia: (_) => MultiBlocProvider(
               providers: [
-                BlocProvider(create: (_) => EmergenciaBloc()),
+                BlocProvider.value(value: GetIt.I<EmergenciaBloc>()),
                 BlocProvider(create: (_) => RetroalimentacionBloc()),
                 BlocProvider(create: (_) => FotosVideosBloc()),
                 BlocProvider(

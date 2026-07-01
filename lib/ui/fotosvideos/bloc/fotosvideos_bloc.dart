@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:controlbomberos/data/helper/result.dart';
+import 'package:controlbomberos/data/services/result.dart';
 import 'package:controlbomberos/data/repositories/fotosvideos/fotosvideos_repository_impl.dart';
 import 'package:controlbomberos/domain/models/fotosvideos.dart';
 import 'package:controlbomberos/ui/fotosvideos/class/tipo_media.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:uuid/uuid.dart';
-import 'package:video_compress/video_compress.dart';
 
 part 'fotosvideos_event.dart';
 part 'fotosvideos_state.dart';
@@ -34,14 +32,10 @@ class FotosVideosBloc extends Bloc<FotosVideosEvent, FotosVideosState> {
     Emitter<FotosVideosState> emit,
   ) async {
     final mediaCamera = await _picker.pickImage(source: ImageSource.camera);
-    final compressed = await FlutterImageCompress.compressWithList(
-      await convertXFileToBytes(mediaCamera!),
-      minHeight: 1920,
-      minWidth: 1080,
-      quality: 96,
-      rotate: 135,
+    final photo = TipoMedia(
+      tipo: 'imagen',
+      file: await convertXFileToBytes(mediaCamera!),
     );
-    final photo = TipoMedia(tipo: 'imagen', file: compressed);
     if (photo.file != null) {
       emit(state.copyWith(media: [...state.media, photo]));
     }
@@ -52,14 +46,9 @@ class FotosVideosBloc extends Bloc<FotosVideosEvent, FotosVideosState> {
     Emitter<FotosVideosState> emit,
   ) async {
     final mediaCamera = await _picker.pickVideo(source: ImageSource.camera);
-    final info = await VideoCompress.compressVideo(
-      mediaCamera!.path,
-      quality: VideoQuality.MediumQuality,
-      deleteOrigin: false,
-    );
     final photo = TipoMedia(
       tipo: 'video',
-      file: await convertXFileToBytes(XFile(info!.file!.path)),
+      file: await convertXFileToBytes(mediaCamera!),
     );
     if (photo.file != null) {
       emit(state.copyWith(media: [...state.media, photo]));
@@ -80,20 +69,8 @@ class FotosVideosBloc extends Bloc<FotosVideosEvent, FotosVideosState> {
 
           // 2. Evaluamos si contiene 'video' (o puedes validar la extensión)
           final esVideo = mimeType != null && mimeType.startsWith('video');
-          final Uint8List compressed;
-          if (esVideo) {
-            compressed = await convertXFileToBytes(xfile);
-          } else {
-            //compressed = await convertXFileToBytes(xfile);
+          final Uint8List compressed = await convertXFileToBytes(xfile);
 
-            compressed = await FlutterImageCompress.compressWithList(
-              await convertXFileToBytes(xfile),
-              minHeight: 1920,
-              minWidth: 1080,
-              quality: 96,
-              rotate: 0,
-            );
-          }
           return TipoMedia(
             tipo: esVideo ? 'video' : 'imagen',
             file: compressed,

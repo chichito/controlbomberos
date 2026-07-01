@@ -1,4 +1,6 @@
 import 'package:controlbomberos/ui/auth/bloc/auth_bloc.dart';
+import 'package:controlbomberos/ui/emergencia/widgets/popupimagenitemwidget.dart';
+import 'package:controlbomberos/ui/emergencia/widgets/popupvideoitemwidget.dart';
 import 'package:controlbomberos/ui/emergencia/widgets/videoitemwidget.dart';
 import 'package:controlbomberos/ui/fotosvideos/bloc/fotosvideos_bloc.dart';
 import 'package:flutter/material.dart';
@@ -134,48 +136,82 @@ class _LstfotosvideosEmergenciaState extends State<LstfotosvideosEmergencia> {
                                         mainAxisSpacing: 4.0,
                                       ),
                                   itemCount: state.media.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                        return Stack(
-                                          fit: StackFit.expand,
-                                          children: [
-                                            state.media[index].tipo == 'imagen'
-                                                ? Image.memory(
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        state.media[index].tipo == 'imagen'
+                                            ? Image.memory(
+                                                state.media[index].file!,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : VideoItemWidget(
+                                                videoBytes:
                                                     state.media[index].file!,
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : VideoItemWidget(
-                                                    videoBytes: state
-                                                        .media[index]
-                                                        .file!,
-                                                  ),
-                                            Positioned(
-                                              right: 5,
-                                              top: 5,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  context
-                                                      .read<FotosVideosBloc>()
-                                                      .add(
-                                                        PickDeleteMediaEvent(
-                                                          index: index,
-                                                        ),
-                                                      );
-                                                },
-                                                child: const CircleAvatar(
-                                                  backgroundColor: Colors.red,
-                                                  radius: 12,
-                                                  child: Icon(
-                                                    Icons.close,
-                                                    size: 14,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
+                                              ),
+                                        Positioned(
+                                          right: 5,
+                                          top: 5,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              context
+                                                  .read<FotosVideosBloc>()
+                                                  .add(
+                                                    PickDeleteMediaEvent(
+                                                      index: index,
+                                                    ),
+                                                  );
+                                            },
+                                            child: const CircleAvatar(
+                                              backgroundColor: Colors.red,
+                                              radius: 12,
+                                              child: Icon(
+                                                Icons.close,
+                                                size: 14,
+                                                color: Colors.white,
                                               ),
                                             ),
-                                          ],
-                                        );
-                                      },
+                                          ),
+                                        ),
+                                        Positioned(
+                                          left: 5,
+                                          bottom: 5,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return state
+                                                              .media[index]
+                                                              .tipo ==
+                                                          'imagen'
+                                                      ? Popupimagenitemwidget(
+                                                          imagenBytes: state
+                                                              .media[index]
+                                                              .file!,
+                                                        )
+                                                      : Popupvideoitemwidget(
+                                                          videoBytes: state
+                                                              .media[index]
+                                                              .file!,
+                                                        );
+                                                },
+                                              );
+                                            },
+                                            child: const CircleAvatar(
+                                              backgroundColor: Colors.blueGrey,
+                                              radius: 12,
+                                              child: Icon(
+                                                Icons.zoom_out,
+                                                size: 14,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ), //bulder aqui
                         ),
                       ),

@@ -1,4 +1,4 @@
-import 'package:controlbomberos/data/helper/result.dart';
+import 'package:controlbomberos/data/services/result.dart';
 import 'package:controlbomberos/domain/models/fotosvideos.dart';
 
 abstract class FotosVideosRepository {

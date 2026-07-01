@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:controlbomberos/data/helper/result.dart';
+import 'package:controlbomberos/data/services/result.dart';
 import 'package:controlbomberos/data/repositories/retroalimentacion/retroalimentacion_repository_impl.dart';
 import 'package:controlbomberos/domain/models/retroalimentacion.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

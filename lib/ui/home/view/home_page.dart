@@ -1,3 +1,4 @@
+import 'package:controlbomberos/data/services/result.dart';
 import 'package:controlbomberos/ui/auth/bloc/auth_bloc.dart';
 import 'package:controlbomberos/ui/core/navigation/app_navigator.dart';
 import 'package:controlbomberos/ui/core/widgets/globo_avatar.dart';
@@ -64,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                           }
                           if (state is EmergenciaFailed) {
                             return Text(
-                              'Error: Failed to load emergencias',
+                              state.message.toString(),
                               style: TextStyle(color: Colors.black),
                             );
                           }
@@ -74,12 +75,37 @@ class _HomePageState extends State<HomePage> {
                               itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(
                                   onTap: () async {
+                                    final messenger = ScaffoldMessenger.of(
+                                      context,
+                                    );
                                     final emergenciaBloc = context
                                         .read<EmergenciaBloc>();
+                                    final emergenciaId =
+                                        state.emergencias[index].id ?? '';
+                                    final (
+                                      mensaje,
+                                      resultado,
+                                    ) = await emergenciaBloc
+                                        .getAtenderEmergencia(
+                                          user!.cedula ?? '',
+                                          emergenciaId,
+                                        );
+                                    print('El resultado $resultado');
+                                    if (!mounted) return;
+                                    if (!resultado) {
+                                      messenger.showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: Colors.red,
+                                          content: Text(mensaje ?? ''),
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                      return;
+                                    }
                                     final result = await Navigator.pushNamed(
                                       context,
                                       AppNavigator.emergencia,
-                                      arguments: state.emergencias[index].id,
+                                      arguments: emergenciaId,
                                     );
                                     if (!mounted) return;
                                     emergenciaBloc.add(GetEmergenciaAllEvent());
@@ -102,6 +128,52 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: BlocBuilder<EmergenciaBloc, EmergenciaState>(
+            builder: (context, state) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    child: ElevatedButton(
+                      onPressed: state is EmergenciaLoaded
+                          ? state.status == StatusResult.loading
+                                ? null
+                                : () async {
+                                    context.read<EmergenciaBloc>().add(
+                                      GetEmergenciaSincronizarEvent(),
+                                    );
+                                  }
+                          : () async {
+                              context.read<EmergenciaBloc>().add(
+                                GetEmergenciaSincronizarEvent(),
+                              );
+                            },
+                      child: state is EmergenciaLoaded
+                          ? state.status == StatusResult.loading
+                                ? CircularProgressIndicator()
+                                : Text('Sincronizar Manual')
+                          : Text('Sincronizar Manual'),
+                    ),
+                  ),
+                  // show status text only when sync resulted in an error
+                  if (state is EmergenciaFailed)
+                    Text(
+                      state.message.toString(),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
         ),
       ),

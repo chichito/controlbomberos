@@ -40,7 +40,7 @@ class Emergencia {
     id: json["id"],
     name: json["name"],
     description: json["description"],
-    fechahoraregistro: json["fechahoraregistro"],
+    fechahoraregistro: DateTime.parse(json["fechahoraregistro"]),
     direccion: json["direccion"],
     referencia: json["referencia"],
     latitud: json["latitud"],

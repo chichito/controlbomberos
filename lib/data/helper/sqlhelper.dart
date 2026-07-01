@@ -163,8 +163,9 @@ class SQLiteHelper {
         celular: "1111",
       ),
     );
-
+    /*
     await emergenciaRepository.batchInsertEmergencias([
+      
       Emergencia(
         id: "1",
         name: "Emergencia 1",
@@ -227,10 +228,13 @@ class SQLiteHelper {
         synced: 0,
       ),
     ]);
-
+*/
+    await emergenciaRepository.eliminarEmergencias();
+    await fotosvideosRepository.eliminarFotosVideos();
     await tiempoRepository.eliminarTiempo();
     await retroalimentacionRepository.eliminarRetroalimentacion();
     await fotosvideosRepository.eliminarFotosVideos();
+
     print("Datos iniciales insertados correctamente");
   }
 
